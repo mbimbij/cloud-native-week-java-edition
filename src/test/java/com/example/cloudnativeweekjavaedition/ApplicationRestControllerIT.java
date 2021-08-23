@@ -22,8 +22,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("h2")
-class ApplicationRestControllerTest {
+@ActiveProfiles("test")
+class ApplicationRestControllerIT {
     private WebClient webClient;
 
     @Autowired

@@ -12,7 +12,6 @@ import reactor.core.publisher.Mono;
 import java.util.Optional;
 
 @Repository
-@Profile("h2")
 public class TodoItemDaoH2 implements TodoItemDao {
 
     @Autowired
