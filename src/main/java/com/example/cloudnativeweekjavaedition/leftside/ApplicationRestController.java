@@ -12,6 +12,7 @@ import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.time.Duration;
 
 @RestController
 @RequestMapping("/items")
@@ -30,10 +31,12 @@ public class ApplicationRestController {
                         .body(todoItemDto));
     }
 
-    @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_NDJSON_VALUE)
     public ResponseEntity<Flux<TodoItemDto>> getAllItems() {
         return ResponseEntity.ok()
                 .body(dao.findAll()
+                        .doOnEach(System.out::println)
+                        .delayElements(Duration.ofSeconds(1))
                         .map(item -> new TodoItemDto(item.getId(), item.getName(), item.getState())));
     }
 
