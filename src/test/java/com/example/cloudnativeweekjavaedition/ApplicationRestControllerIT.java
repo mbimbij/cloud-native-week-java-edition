@@ -3,7 +3,6 @@ package com.example.cloudnativeweekjavaedition;
 import com.example.cloudnativeweekjavaedition.core.State;
 import com.example.cloudnativeweekjavaedition.core.TodoItemDao;
 import com.example.cloudnativeweekjavaedition.leftside.TodoItemDto;
-import com.example.cloudnativeweekjavaedition.rightside.h2.TodoItemDaoH2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
