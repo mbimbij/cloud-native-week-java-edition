@@ -1,10 +1,9 @@
-package com.example.cloudnativeweekjavaedition.rightside.h2;
+package com.example.cloudnativeweekjavaedition.rightside;
 
 import com.example.cloudnativeweekjavaedition.core.State;
 import com.example.cloudnativeweekjavaedition.core.TodoItem;
 import com.example.cloudnativeweekjavaedition.core.TodoItemDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -12,10 +11,10 @@ import reactor.core.publisher.Mono;
 import java.util.Optional;
 
 @Repository
-public class TodoItemDaoH2 implements TodoItemDao {
+public class TodoItemDaoImpl implements TodoItemDao {
 
     @Autowired
-    private TodoItemDaoH2Interface h2Interface;
+    private TodoItemDaoR2dbc h2Interface;
 
     @Override
     public Mono<TodoItem> create(TodoItem item) {

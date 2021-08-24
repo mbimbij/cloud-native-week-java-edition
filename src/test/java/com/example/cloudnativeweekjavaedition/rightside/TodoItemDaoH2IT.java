@@ -1,4 +1,4 @@
-package com.example.cloudnativeweekjavaedition.rightside.h2;
+package com.example.cloudnativeweekjavaedition.rightside;
 
 import com.example.cloudnativeweekjavaedition.core.State;
 import com.example.cloudnativeweekjavaedition.core.TodoItem;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TodoItemDaoH2IT {
 
     @Autowired
-    @Qualifier("todoItemDaoH2")
+    @Qualifier("todoItemDaoImpl")
     private TodoItemDao todoItemDao;
 
     @BeforeEach

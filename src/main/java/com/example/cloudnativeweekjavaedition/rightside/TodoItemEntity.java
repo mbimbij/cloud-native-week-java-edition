@@ -1,4 +1,4 @@
-package com.example.cloudnativeweekjavaedition.rightside.h2;
+package com.example.cloudnativeweekjavaedition.rightside;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
