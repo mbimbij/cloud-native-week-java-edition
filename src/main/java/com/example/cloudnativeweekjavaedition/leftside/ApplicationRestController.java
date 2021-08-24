@@ -37,7 +37,6 @@ public class ApplicationRestController {
         return ResponseEntity.ok()
                 .body(service.findAll()
                         .doOnEach(System.out::println)
-                        .delayElements(Duration.ofSeconds(1))
                         .map(item -> new TodoItemDto(item.getId(), item.getName(), item.getState())));
     }
 
