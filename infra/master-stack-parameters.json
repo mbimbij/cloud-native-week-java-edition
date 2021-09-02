@@ -1,0 +1,6 @@
+[
+  {
+    "ParameterKey": "S3Bucket",
+    "ParameterValue": "${S3_BUCKET_NAME}"
+  }
+]
