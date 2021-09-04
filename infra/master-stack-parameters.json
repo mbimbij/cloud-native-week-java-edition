@@ -2,5 +2,17 @@
   {
     "ParameterKey": "S3Bucket",
     "ParameterValue": "${S3_BUCKET_NAME}"
+  },
+  {
+    "ParameterKey": "DBUser",
+    "ParameterValue": "dbuser"
+  },
+  {
+    "ParameterKey": "DBPassword",
+    "ParameterValue": "pknfz1!!"
+  },
+  {
+    "ParameterKey": "OperatorEMail",
+    "ParameterValue": "joseph.mbimbi@gmail.com"
   }
 ]

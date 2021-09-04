@@ -1,3 +1,5 @@
+include infra.env
+
 ifndef APPLICATION_NAME
 $(error APPLICATION_NAME is not set)
 endif
@@ -5,11 +7,18 @@ ifndef AWS_REGION
 AWS_REGION := $(shell aws configure get region)
 endif
 
+GITHUB_REPO_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
+export GITHUB_REPO_BRANCH
 MASTER_STACK_NAME=$(APPLICATION_NAME)-master-stack
 
-all: s3-bucket
+all: s3-bucket ssh-key-pair
+	aws cloudformation package --template-file master-stack.yml --output-template packaged-templates/master-stack.yml --s3-bucket $(S3_BUCKET_NAME)
+	echo "AWS_REGION $(AWS_REGION)"
+	envsubst < master-stack-parameters.json  > packaged-templates/master-stack-parameters.json
+	aws cloudformation deploy --stack-name $(MASTER_STACK_NAME) --template-file packaged-templates/master-stack.yml --parameter-overrides file://packaged-templates/master-stack-parameters.json --capabilities CAPABILITY_NAMED_IAM
 delete-all:
-	$(MAKE) delete-s3-bucket
+	$(MAKE) -j2 delete-s3-bucket delete-ssh-key-pair
+	./stack-deletion/delete-stack-wait-termination.sh $(MASTER_STACK_NAME)
 
 
 AWS_ACCOUNT_ID := $(shell aws sts get-caller-identity --query "Account" --output text)
@@ -23,3 +32,9 @@ s3-bucket::
             BucketName=$(S3_BUCKET_NAME)
 delete-s3-bucket:
 	./stack-deletion/delete-stack-wait-termination.sh $(S3_BUCKET_NAME)
+
+
+ssh-key-pair::
+	./ssh-key-pair/create-ssh-key-pair.sh $(SSH_KEY_NAME) $(SSH_KEY_PATH)
+delete-ssh-key-pair:
+	aws ec2 delete-key-pair --key-name $(SSH_KEY_NAME)
