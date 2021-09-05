@@ -32,6 +32,15 @@ Parameters:
     AllowedPattern: >-
       ([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)
     ConstraintDescription: must be a valid email address.
+  S3Bucket:
+    Type: String
+    Description: S3 Bucket
+  GithubRepo:
+    Type: String
+    Description: Github source code repository
+  GithubRepoBranch:
+    Type: String
+    Description: Github source code branch
 Resources:
   BeanstalkBasedInfra:
     Type: "AWS::CloudFormation::Stack"
@@ -46,6 +55,22 @@ Resources:
           Ref: DBPassword
         OperatorEMail:
           Ref: OperatorEMail
+      Tags:
+        - Key: Name
+          Value: !Sub '${ApplicationName}::BeanstalkBasedInfra'
+  BeanstalkBasedPipeline:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      TemplateURL: 'beanstalk/beanstalk-pipeline.yml'
+      Parameters:
+        ApplicationName:
+          Ref: ApplicationName
+        S3Bucket:
+          Ref: S3Bucket
+        GithubRepo:
+          Ref: GithubRepo
+        GithubRepoBranch:
+          Ref: GithubRepoBranch
       Tags:
         - Key: Name
           Value: !Sub '${ApplicationName}::BeanstalkBasedInfra'
