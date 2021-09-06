@@ -17,7 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 //@EnabledIf(expression = "#{environment.acceptsProfiles('local')}", loadContext = true)
-@ActiveProfiles("test")
 class TodoItemDaoH2IT {
 
     @Autowired

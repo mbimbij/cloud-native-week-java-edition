@@ -5,7 +5,7 @@ phases:
       java: corretto11
   build:
     commands:
-      - mvn clean verify
+      - mvn clean verify -Dspring.profiles.include=test
   post_build:
     commands:
       - mv target/*.jar application.jar
