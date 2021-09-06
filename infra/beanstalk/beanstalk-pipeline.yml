@@ -13,6 +13,12 @@ Parameters:
     Default: 'main'
     Type: String
     Description: Github source code branch
+  BeanstalkApplicationName:
+    Type: String
+    Description: Beanstalk Application Name
+  BeanstalkEnvironmentName:
+    Type: String
+    Description: Beanstalk Environment Name
 Resources:
   GithubConnection:
     Type: AWS::CodeStarConnections::Connection
@@ -94,6 +100,11 @@ Resources:
                 Action:
                   - codedeploy:*
                 Resource: !Sub 'arn:${AWS::Partition}:codedeploy:${AWS::Region}:${AWS::AccountId}*'
+              - Effect: Allow
+                Action:
+                  - '*'
+#                Resource: !Sub 'arn:${AWS::Partition}:elasticbeanstalk:${AWS::Region}:${AWS::AccountId}*'
+                Resource: '*'
       AssumeRolePolicyDocument:
         Statement:
           - Action: "sts:AssumeRole"
@@ -159,3 +170,17 @@ Resources:
               Configuration:
                 ProjectName:
                   Ref: BuildProject
+        - Name: Deploy
+          Actions:
+            - Name: Deploy
+              RunOrder: 1
+              InputArtifacts:
+                - Name: BuildArtifact
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: 1
+                Provider: ElasticBeanstalk
+              Configuration:
+                ApplicationName: !Ref BeanstalkApplicationName
+                EnvironmentName: !Ref BeanstalkEnvironmentName

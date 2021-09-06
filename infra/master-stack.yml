@@ -10,6 +10,9 @@ Parameters:
   ApplicationName:
     Type: String
     Description: Application Name
+  DBName:
+    Type: String
+    Description: DB Name
   DBUser:
     NoEcho: 'true'
     Type: String
@@ -49,6 +52,7 @@ Resources:
       Parameters:
         ApplicationName:
           Ref: ApplicationName
+        DBName: !Ref DBName
         DBUser:
           Ref: DBUser
         DBPassword:
@@ -71,6 +75,8 @@ Resources:
           Ref: GithubRepo
         GithubRepoBranch:
           Ref: GithubRepoBranch
+        BeanstalkApplicationName: !GetAtt BeanstalkBasedInfra.Outputs.ApplicationName
+        BeanstalkEnvironmentName: !GetAtt BeanstalkBasedInfra.Outputs.EnvironmentName
       Tags:
         - Key: Name
           Value: !Sub '${ApplicationName}::BeanstalkBasedInfra'

@@ -32,6 +32,9 @@ Parameters:
     AllowedPattern: >-
       ([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)
     ConstraintDescription: must be a valid email address.
+  DBName:
+    Type: String
+    Description: DB Name
 Mappings:
   Region2Principal:
     ap-east-1:
@@ -148,17 +151,6 @@ Resources:
     Properties:
       ApplicationName: !Ref ApplicationName
       Description: !Sub 'AWS Elastic Beanstalk Application for ${ApplicationName}'
-  SampleApplicationVersion:
-    Type: 'AWS::ElasticBeanstalk::ApplicationVersion'
-    Properties:
-      Description: Version 1.0
-      ApplicationName: !Ref SampleApplication
-      SourceBundle:
-        S3Bucket: !Join
-          - '-'
-          - - cloudformation-examples
-            - !Ref 'AWS::Region'
-        S3Key: CloudFormationBeanstalkRDSExample.war
   SampleConfigurationTemplate:
     Type: 'AWS::ElasticBeanstalk::ConfigurationTemplate'
     Properties:
@@ -167,7 +159,7 @@ Resources:
       SolutionStackName: 64bit Amazon Linux 2 v3.2.5 running Corretto 11
       OptionSettings:
         - Namespace: 'aws:elasticbeanstalk:application:environment'
-          OptionName: JDBC_CONNECTION_STRING
+          OptionName: SPRING_FLYWAY_URL
           Value: !Join
             - ''
             - - 'jdbc:mysql://'
@@ -178,12 +170,33 @@ Resources:
               - !GetAtt
                 - SampleDB
                 - Endpoint.Port
-              - /beanstalkdb
+              - '/'
+              - !Ref DBName
         - Namespace: 'aws:elasticbeanstalk:application:environment'
-          OptionName: PARAM1
+          OptionName: SPRING_FLYWAY_USER
           Value: !Ref DBUser
         - Namespace: 'aws:elasticbeanstalk:application:environment'
-          OptionName: PARAM2
+          OptionName: SPRING_FLYWAY_PASSWORD
+          Value: !Ref DBPassword
+        - Namespace: 'aws:elasticbeanstalk:application:environment'
+          OptionName: SPRING_R2DBC_URL
+          Value: !Join
+            - ''
+            - - 'r2dbc:mysql://'
+              - !GetAtt
+                - SampleDB
+                - Endpoint.Address
+              - ':'
+              - !GetAtt
+                - SampleDB
+                - Endpoint.Port
+              - '/'
+              - !Ref DBName
+        - Namespace: 'aws:elasticbeanstalk:application:environment'
+          OptionName: SPRING_R2DBC_USERNAME
+          Value: !Ref DBUser
+        - Namespace: 'aws:elasticbeanstalk:application:environment'
+          OptionName: SPRING_R2DBC_PASSWORD
           Value: !Ref DBPassword
         - Namespace: 'aws:autoscaling:launchconfiguration'
           OptionName: SecurityGroups
@@ -198,7 +211,6 @@ Resources:
       ApplicationName: !Ref SampleApplication
       EnvironmentName: !Sub '${ApplicationName}-environment'
       TemplateName: !Ref SampleConfigurationTemplate
-      VersionLabel: !Ref SampleApplicationVersion
   InstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -214,6 +226,10 @@ Resources:
           FromPort: '3306'
           ToPort: '3306'
           SourceSecurityGroupName: !Ref InstanceSecurityGroup
+        - IpProtocol: tcp
+          FromPort: '3306'
+          ToPort: '3306'
+          CidrIp: 0.0.0.0/0
   DBSecurityGroup:
     Type: 'AWS::RDS::DBSecurityGroup'
     Condition: Is-EC2-Classic
@@ -225,7 +241,7 @@ Resources:
     Type: 'AWS::RDS::DBInstance'
     Properties:
       Engine: MySQL
-      DBName: beanstalkdb
+      DBName: !Ref DBName
       MasterUsername: !Ref DBUser
       DBInstanceClass: db.t2.small
       AllocatedStorage: '5'
@@ -275,3 +291,9 @@ Outputs:
         - !GetAtt
           - SampleEnvironment
           - EndpointURL
+  ApplicationName:
+    Description: Name of the beanstalk application
+    Value: !Ref SampleApplication
+  EnvironmentName:
+    Description: Name of the beanstalk environment
+    Value: !Ref SampleEnvironment
