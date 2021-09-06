@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -80,7 +79,7 @@ class ApplicationRestControllerIT {
         // THEN
         int locationPathId1 = Integer.parseInt(responseEntity1.getHeaders().getLocation().getPath().split("/")[2]);
         int locationPathId2 = Integer.parseInt(responseEntity2.getHeaders().getLocation().getPath().split("/")[2]);
-        assertThat(locationPathId2).isEqualTo(locationPathId1+1);
+        assertThat(locationPathId2).isEqualTo(locationPathId1 + 1);
     }
 
     @Test
@@ -138,7 +137,7 @@ class ApplicationRestControllerIT {
                 .retrieve()
                 .toEntity(TodoItemDto.class)
                 .block();
-        ResponseEntity<TodoItemDto> responseEntity23= webClient.post()
+        ResponseEntity<TodoItemDto> responseEntity23 = webClient.post()
                 .uri("/items")
                 .body(Mono.just(item3), TodoItemDto.class)
                 .retrieve()
@@ -155,7 +154,7 @@ class ApplicationRestControllerIT {
 
         // WHEN
         ResponseEntity<Object> block = webClient.delete()
-                .uri("items/"+ idItem1)
+                .uri("items/" + idItem1)
                 .retrieve()
                 .toEntity(Object.class)
                 .block();

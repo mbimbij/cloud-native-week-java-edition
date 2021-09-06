@@ -1,7 +1,6 @@
 package com.example.cloudnativeweekjavaedition.leftside;
 
 import com.example.cloudnativeweekjavaedition.core.TodoItem;
-import com.example.cloudnativeweekjavaedition.core.TodoItemDao;
 import com.example.cloudnativeweekjavaedition.core.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +12,6 @@ import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.time.Duration;
 
 @RestController
 @RequestMapping("/items")
