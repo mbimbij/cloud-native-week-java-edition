@@ -21,14 +21,6 @@ Parameters:
     MaxLength: '16'
     AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
     ConstraintDescription: must begin with a letter and contain only alphanumeric characters.
-  DBPassword:
-    NoEcho: 'true'
-    Type: String
-    Description: Test database admin account password
-    MinLength: '6'
-    MaxLength: '41'
-#    AllowedPattern: '[a-zA-Z0-9]*'
-    ConstraintDescription: length must be between 6 and 41.
   OperatorEMail:
     Description: EMail address to notify if there are any operational issues
     Type: String
@@ -53,12 +45,8 @@ Resources:
         ApplicationName:
           Ref: ApplicationName
         DBName: !Ref DBName
-        DBUser:
-          Ref: DBUser
-        DBPassword:
-          Ref: DBPassword
-        OperatorEMail:
-          Ref: OperatorEMail
+        DBUser: !Ref DBUser
+        OperatorEMail: !Ref OperatorEMail
       Tags:
         - Key: Name
           Value: !Sub '${ApplicationName}::BeanstalkBasedInfra'
@@ -67,16 +55,12 @@ Resources:
     Properties:
       TemplateURL: 'beanstalk/beanstalk-pipeline.yml'
       Parameters:
-        ApplicationName:
-          Ref: ApplicationName
-        S3Bucket:
-          Ref: S3Bucket
-        GithubRepo:
-          Ref: GithubRepo
-        GithubRepoBranch:
-          Ref: GithubRepoBranch
+        ApplicationName: !Ref ApplicationName
+        S3Bucket: !Ref S3Bucket
+        GithubRepo: !Ref GithubRepo
+        GithubRepoBranch: !Ref GithubRepoBranch
         BeanstalkApplicationName: !GetAtt BeanstalkBasedInfra.Outputs.ApplicationName
         BeanstalkEnvironmentName: !GetAtt BeanstalkBasedInfra.Outputs.EnvironmentName
       Tags:
         - Key: Name
-          Value: !Sub '${ApplicationName}::BeanstalkBasedInfra'
+          Value: !Sub '${ApplicationName}::BeanstalkBasedPipeline'

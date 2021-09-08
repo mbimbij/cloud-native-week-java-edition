@@ -18,14 +18,6 @@ Parameters:
     MaxLength: '16'
     AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
     ConstraintDescription: must begin with a letter and contain only alphanumeric characters.
-  DBPassword:
-    NoEcho: 'true'
-    Type: String
-    Description: Test database admin account password
-    MinLength: '6'
-    MaxLength: '41'
-#    AllowedPattern: '[a-zA-Z0-9]*'
-    ConstraintDescription: length must be between 6 and 41.
   OperatorEMail:
     Description: EMail address to notify if there are any operational issues
     Type: String
@@ -177,7 +169,7 @@ Resources:
           Value: !Ref DBUser
         - Namespace: 'aws:elasticbeanstalk:application:environment'
           OptionName: SPRING_FLYWAY_PASSWORD
-          Value: !Ref DBPassword
+          Value: !Sub '{{resolve:secretsmanager:${DBSecret}:SecretString:password}}'
         - Namespace: 'aws:elasticbeanstalk:application:environment'
           OptionName: SPRING_R2DBC_URL
           Value: !Join
@@ -197,7 +189,7 @@ Resources:
           Value: !Ref DBUser
         - Namespace: 'aws:elasticbeanstalk:application:environment'
           OptionName: SPRING_R2DBC_PASSWORD
-          Value: !Ref DBPassword
+          Value: !Sub '{{resolve:secretsmanager:${DBSecret}:SecretString:password}}'
         - Namespace: 'aws:autoscaling:launchconfiguration'
           OptionName: SecurityGroups
           Value: !Ref InstanceSecurityGroup
@@ -245,7 +237,7 @@ Resources:
       MasterUsername: !Ref DBUser
       DBInstanceClass: db.t2.small
       AllocatedStorage: '5'
-      MasterUserPassword: !Ref DBPassword
+      MasterUserPassword: !Sub '{{resolve:secretsmanager:${DBSecret}:SecretString:password}}'
       VPCSecurityGroups: !If
         - Is-EC2-VPC
         - - !GetAtt
@@ -256,6 +248,25 @@ Resources:
         - Is-EC2-Classic
         - - !Ref DBSecurityGroup
         - !Ref 'AWS::NoValue'
+  DBSecret:
+    Type: 'AWS::SecretsManager::Secret'
+    Properties:
+      Name: !Sub '${ApplicationName}-DBSecret'
+      Description: "This secret has a dynamically generated secret password."
+      GenerateSecretString:
+        SecretStringTemplate: !Sub '{"username": "${DBUser}"}'
+        GenerateStringKey: "password"
+        PasswordLength: 30
+        ExcludeCharacters: '"@/\'
+      Tags:
+        - Key: ApplicationName
+          Value: !Ref ApplicationName
+  SecretRDSInstanceAttachment:
+    Type: "AWS::SecretsManager::SecretTargetAttachment"
+    Properties:
+      SecretId: !Ref DBSecret
+      TargetId: !Ref SampleDB
+      TargetType: AWS::RDS::DBInstance
   AlarmTopic:
     Type: 'AWS::SNS::Topic'
     Properties:
