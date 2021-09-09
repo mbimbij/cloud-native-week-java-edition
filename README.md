@@ -132,3 +132,8 @@ docker-compose down && docker-compose up
 
 ✗|→ 
 ```
+
+# Resources
+
+- [https://github.com/cfregly/fluxcapacitor/blob/master/cloudformation/Sample-Elastic-Beanstalk-in-VPC.template](https://github.com/cfregly/fluxcapacitor/blob/master/cloudformation/Sample-Elastic-Beanstalk-in-VPC.template)
+- [https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options.html](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options.html)
