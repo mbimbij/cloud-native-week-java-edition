@@ -54,5 +54,21 @@
   {
     "ParameterKey": "StagingPrivateSubnet2CIDR",
     "ParameterValue": "10.1.11.0/24"
+  },
+  {
+    "ParameterKey": "SshKeyName",
+    "ParameterValue": "${SSH_KEY_NAME}"
+  },
+  {
+    "ParameterKey": "BaseAmiId",
+    "ParameterValue": "${BASE_AMI_ID}"
+  },
+  {
+    "ParameterKey": "StagingMinInstancesNumber",
+    "ParameterValue": "5"
+  },
+  {
+    "ParameterKey": "StagingMaxInstancesNumber",
+    "ParameterValue": "10"
   }
 ]

@@ -12,6 +12,7 @@ export GITHUB_REPO_BRANCH
 MASTER_STACK_NAME=$(APPLICATION_NAME)-master-stack
 
 all: s3-bucket ssh-key-pair
+	$(eval export BASE_AMI_ID = $(shell aws ssm get-parameters --names /aws/service/canonical/ubuntu/server/20.04/stable/current/amd64/hvm/ebs-gp2/ami-id --query 'Parameters[0].[Value]' --output text))
 	aws cloudformation package --template-file master-stack.yml --output-template packaged-templates/master-stack.yml --s3-bucket $(S3_BUCKET_NAME)
 	echo "AWS_REGION $(AWS_REGION)"
 	envsubst < master-stack-parameters.json  > packaged-templates/master-stack-parameters.json

@@ -36,6 +36,19 @@ Parameters:
   PublicSubnetIds:
     Type: List<AWS::EC2::Subnet::Id>
     Description: Public Subnet Ids
+  SshKeyName:
+    Type: String
+    Description: SSH Key Pair Name
+  BastionHostSecurityGroupId:
+    Default: ""
+    Type: String
+    Description: Bastion Host Security Group
+  StagingMinInstancesNumber:
+    Type: Number
+    Description: Staging Min Instances Number
+  StagingMaxInstancesNumber:
+    Type: Number
+    Description: Staging MacxInstances Number
 Mappings:
   Region2Principal:
     ap-east-1:
@@ -218,6 +231,15 @@ Resources:
           Value: !Join
             - ','
             - !Ref PublicSubnetIds
+        - Namespace: 'aws:autoscaling:launchconfiguration'
+          OptionName: EC2KeyName
+          Value: !Ref SshKeyName
+        - Namespace: 'aws:autoscaling:asg'
+          OptionName: MinSize
+          Value: !Ref StagingMinInstancesNumber
+        - Namespace: 'aws:autoscaling:asg'
+          OptionName: MaxSize
+          Value: !Ref StagingMaxInstancesNumber
   SampleEnvironment:
     Type: 'AWS::ElasticBeanstalk::Environment'
     Properties:
@@ -230,7 +252,11 @@ Resources:
     Properties:
       GroupDescription: RDS allows ingress from EC2 instances in this group.
       VpcId: !Ref VpcId
-      SecurityGroupIngress: []
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          SourceSecurityGroupId: !Ref BastionHostSecurityGroupId
   DBEC2SecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Condition: Is-EC2-VPC
@@ -245,7 +271,7 @@ Resources:
         - IpProtocol: tcp
           FromPort: '3306'
           ToPort: '3306'
-          CidrIp: 0.0.0.0/0
+          SourceSecurityGroupId: !Ref BastionHostSecurityGroupId
   DBSecurityGroup:
     Type: 'AWS::RDS::DBSecurityGroup'
     Condition: Is-EC2-Classic

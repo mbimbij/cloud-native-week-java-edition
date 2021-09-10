@@ -61,6 +61,18 @@ Parameters:
     Description: CIDR block should used to create the private subnet in AZ2 (e.g. 10.0.0.192/26)
     AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{2})"
     ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x. (e.g. 10.0.0.192/26)
+  SshKeyName:
+    Type: String
+    Description: SSH Key Pair Name
+  BaseAmiId:
+    Type: AWS::EC2::Image::Id
+    Description: Ami Id
+  StagingMinInstancesNumber:
+    Type: Number
+    Description: Staging Min Instances Number
+  StagingMaxInstancesNumber:
+    Type: Number
+    Description: Staging MacxInstances Number
 Resources:
   StagingNetwork:
     Type: "AWS::CloudFormation::Stack"
@@ -82,7 +94,20 @@ Resources:
         Environment: 'staging'
       Tags:
         - Key: Name
-          Value: !Sub '${AWS::StackName}/StagingNetwork'
+          Value: !Sub '${ApplicationName}::StagingNetwork'
+  StagingBastionHost:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      TemplateURL: 'bastion-host/bastion-host.yml'
+      Parameters:
+        VpcId: !GetAtt StagingNetwork.Outputs.VPC
+        SubnetId: !GetAtt StagingNetwork.Outputs.PublicSubnet1
+        Environment: 'staging'
+        AmiId: !Ref BaseAmiId
+        SshKeyName: !Ref SshKeyName
+      Tags:
+        - Key: Name
+          Value: !Sub '${ApplicationName}::StagingBastionHost'
   BeanstalkBasedInfra:
     Type: "AWS::CloudFormation::Stack"
     Properties:
@@ -95,6 +120,10 @@ Resources:
         VpcId: !GetAtt StagingNetwork.Outputs.VPC
         PrivateSubnetIds: !GetAtt StagingNetwork.Outputs.PrivateSubnets
         PublicSubnetIds: !GetAtt StagingNetwork.Outputs.PublicSubnets
+        SshKeyName: !Ref SshKeyName
+        BastionHostSecurityGroupId: !GetAtt StagingBastionHost.Outputs.SecurityGroupId
+        StagingMinInstancesNumber: !Ref StagingMinInstancesNumber
+        StagingMaxInstancesNumber: !Ref StagingMaxInstancesNumber
       Tags:
         - Key: Name
           Value: !Sub '${ApplicationName}::BeanstalkBasedInfra'
