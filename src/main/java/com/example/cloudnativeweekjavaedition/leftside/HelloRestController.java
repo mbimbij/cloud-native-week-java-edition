@@ -1,20 +1,24 @@
 package com.example.cloudnativeweekjavaedition.leftside;
 
-import org.springframework.http.MediaType;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
-
-import java.util.UUID;
+import org.springframework.web.client.RestTemplate;
 
 @RestController
+@Profile({"staging", "prod"})
 @RequestMapping("/hello")
 public class HelloRestController {
-    private String id = UUID.randomUUID().toString();
+    private String id;
 
-    @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Mono<String> hello() {
-        return Mono.just("hello "+id);
+    public HelloRestController() {
+        id = new RestTemplate().getForObject("http://169.254.169.254/latest/meta-data/instance-id", String.class);
+    }
+
+    @GetMapping
+    public String hello() {
+        new RestTemplate();
+        return "hello " + id;
     }
 }
