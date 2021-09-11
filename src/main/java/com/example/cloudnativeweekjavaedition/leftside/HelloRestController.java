@@ -19,6 +19,6 @@ public class HelloRestController {
     @GetMapping
     public String hello() {
         new RestTemplate();
-        return "hello " + id;
+        return "hello 2 " + id;
     }
 }

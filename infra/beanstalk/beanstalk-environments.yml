@@ -237,6 +237,9 @@ Resources:
         - Namespace: 'aws:autoscaling:launchconfiguration'
           OptionName: EC2KeyName
           Value: !Ref SshKeyName
+        - Namespace: 'aws:elb:loadbalancer'
+          OptionName: CrossZone
+          Value: true
         - Namespace: 'aws:autoscaling:asg'
           OptionName: MinSize
           Value: !Ref StagingMinInstancesNumber
