@@ -168,8 +168,7 @@ Resources:
                 Version: 1
                 Provider: CodeBuild
               Configuration:
-                ProjectName:
-                  Ref: BuildProject
+                ProjectName: !Ref BuildProject
         - Name: Deploy
           Actions:
             - Name: Deploy

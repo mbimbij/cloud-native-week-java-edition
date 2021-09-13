@@ -47,18 +47,12 @@ Resources:
     Properties:
       TemplateURL: '../network/network.yml'
       Parameters:
-        VPCCIDR:
-          Ref: StagingVPCCIDR
-        PublicSubnet1CIDR:
-          Ref: StagingPublicSubnet1CIDR
-        PublicSubnet2CIDR:
-          Ref: StagingPublicSubnet2CIDR
-        PrivateSubnet1CIDR:
-          Ref: StagingPrivateSubnet1CIDR
-        PrivateSubnet2CIDR:
-          Ref: StagingPrivateSubnet2CIDR
-        ApplicationName:
-          Ref: ApplicationName
+        VPCCIDR: !Ref StagingVPCCIDR
+        PublicSubnet1CIDR: !Ref StagingPublicSubnet1CIDR
+        PublicSubnet2CIDR: !Ref StagingPublicSubnet2CIDR
+        PrivateSubnet1CIDR: !Ref StagingPrivateSubnet1CIDR
+        PrivateSubnet2CIDR: !Ref StagingPrivateSubnet2CIDR
+        ApplicationName: !Ref ApplicationName
         Environment: 'staging'
       Tags:
         - Key: Name
