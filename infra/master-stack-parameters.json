@@ -65,10 +65,14 @@
   },
   {
     "ParameterKey": "StagingMinInstancesNumber",
-    "ParameterValue": "5"
+    "ParameterValue": "3"
   },
   {
     "ParameterKey": "StagingMaxInstancesNumber",
     "ParameterValue": "10"
+  },
+  {
+    "ParameterKey": "ApplicationPort",
+    "ParameterValue": "8080"
   }
 ]

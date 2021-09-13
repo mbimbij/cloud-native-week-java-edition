@@ -49,6 +49,9 @@ Parameters:
   StagingMaxInstancesNumber:
     Type: Number
     Description: Staging MacxInstances Number
+  ApplicationPort:
+    Type: Number
+    Description: Application Port
 Mappings:
   Region2Principal:
     ap-east-1:
@@ -172,6 +175,9 @@ Resources:
       Description: Default Configuration Version 1.0
       SolutionStackName: 64bit Amazon Linux 2 v3.2.5 running Corretto 11
       OptionSettings:
+        - Namespace: 'aws:elasticbeanstalk:application:environment'
+          OptionName: PORT
+          Value: !Ref ApplicationPort
         - Namespace: 'aws:elasticbeanstalk:application:environment'
           OptionName: SPRING_FLYWAY_URL
           Value: !Join

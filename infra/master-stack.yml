@@ -73,6 +73,9 @@ Parameters:
   StagingMaxInstancesNumber:
     Type: Number
     Description: Staging MacxInstances Number
+  ApplicationPort:
+    Type: Number
+    Description: Application Port
 Resources:
   StagingNetwork:
     Type: "AWS::CloudFormation::Stack"
@@ -124,6 +127,7 @@ Resources:
         BastionHostSecurityGroupId: !GetAtt StagingBastionHost.Outputs.SecurityGroupId
         StagingMinInstancesNumber: !Ref StagingMinInstancesNumber
         StagingMaxInstancesNumber: !Ref StagingMaxInstancesNumber
+        ApplicationPort: !Ref ApplicationPort
       Tags:
         - Key: Name
           Value: !Sub '${ApplicationName}::BeanstalkBasedInfra'
