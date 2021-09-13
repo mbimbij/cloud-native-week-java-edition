@@ -80,7 +80,7 @@ Resources:
   StagingNetwork:
     Type: "AWS::CloudFormation::Stack"
     Properties:
-      TemplateURL: 'network/network.yml'
+      TemplateURL: '../network/network.yml'
       Parameters:
         VPCCIDR:
           Ref: StagingVPCCIDR
@@ -101,7 +101,7 @@ Resources:
   StagingBastionHost:
     Type: "AWS::CloudFormation::Stack"
     Properties:
-      TemplateURL: 'bastion-host/bastion-host.yml'
+      TemplateURL: '../bastion-host/bastion-host.yml'
       Parameters:
         VpcId: !GetAtt StagingNetwork.Outputs.VPC
         SubnetId: !GetAtt StagingNetwork.Outputs.PublicSubnet1
@@ -114,7 +114,7 @@ Resources:
   BeanstalkBasedInfra:
     Type: "AWS::CloudFormation::Stack"
     Properties:
-      TemplateURL: 'beanstalk/beanstalk-environments.yml'
+      TemplateURL: 'beanstalk-environments.yml'
       Parameters:
         ApplicationName: !Ref ApplicationName
         DBName: !Ref DBName
@@ -134,7 +134,7 @@ Resources:
   BeanstalkBasedPipeline:
     Type: "AWS::CloudFormation::Stack"
     Properties:
-      TemplateURL: 'beanstalk/beanstalk-pipeline.yml'
+      TemplateURL: 'beanstalk-pipeline.yml'
       Parameters:
         ApplicationName: !Ref ApplicationName
         S3Bucket: !Ref S3Bucket
