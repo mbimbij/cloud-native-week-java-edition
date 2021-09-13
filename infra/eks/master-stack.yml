@@ -70,3 +70,16 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub '${ApplicationName}::BastionHost'
+  EksCluster:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      TemplateURL: 'eks-cluster.yml'
+      Parameters:
+        ApplicationName: !Ref ApplicationName
+        VpcId: !GetAtt Network.Outputs.VPC
+        KubernetesVersion: '1.21'
+        SubnetIds: !GetAtt Network.Outputs.Subnets
+        PublicSubnetIds: !GetAtt Network.Outputs.PublicSubnets
+      Tags:
+        - Key: Name
+          Value: !Sub '${ApplicationName}::EksCluster'
