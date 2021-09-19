@@ -276,6 +276,15 @@ Resources:
         - Namespace: 'aws:autoscaling:updatepolicy:rollingupdate'
           OptionName: PauseTime
           Value: PT10s
+        - Namespace: 'aws:elasticbeanstalk:cloudwatch:logs'
+          OptionName: StreamLogs
+          Value: true
+        - Namespace: 'aws:elasticbeanstalk:cloudwatch:logs'
+          OptionName: DeleteOnTerminate
+          Value: false
+        - Namespace: 'aws:elasticbeanstalk:cloudwatch:logs'
+          OptionName: RetentionInDays
+          Value: 7
 
   SampleEnvironment:
     Type: 'AWS::ElasticBeanstalk::Environment'
