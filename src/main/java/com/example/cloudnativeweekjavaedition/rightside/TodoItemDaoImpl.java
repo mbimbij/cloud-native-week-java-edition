@@ -14,26 +14,26 @@ import java.util.Optional;
 public class TodoItemDaoImpl implements TodoItemDao {
 
     @Autowired
-    private TodoItemDaoR2dbc h2Interface;
+    private TodoItemDaoR2dbc r2dbcInterface;
 
     @Override
     public Mono<TodoItem> create(TodoItem item) {
         TodoItemEntity itemEntity = new TodoItemEntity(item.getName(), item.getState().toString());
-        return h2Interface.save(itemEntity).map(entity -> new TodoItem(entity.getId(), entity.getName(),
+        return r2dbcInterface.save(itemEntity).map(entity -> new TodoItem(entity.getId(), entity.getName(),
                 State.valueOf(entity.getState())));
     }
 
     @Override
     public Mono<TodoItem> update(TodoItem item) {
         TodoItemEntity itemEntity = new TodoItemEntity(item.getId(), item.getName(), item.getState().toString());
-        return h2Interface.save(itemEntity).map(entity -> new TodoItem(entity.getId(),
+        return r2dbcInterface.save(itemEntity).map(entity -> new TodoItem(entity.getId(),
                 entity.getName(),
                 State.valueOf(entity.getState())));
     }
 
     @Override
     public Mono<Optional<TodoItem>> findById(int id) {
-        return h2Interface.findById(id)
+        return r2dbcInterface.findById(id)
                 .map(Optional::ofNullable)
                 .map(optionalEntity -> optionalEntity
                         .map(itemEntity -> new TodoItem(itemEntity.getId(),
@@ -43,7 +43,7 @@ public class TodoItemDaoImpl implements TodoItemDao {
 
     @Override
     public Flux<TodoItem> findAll() {
-        return h2Interface.findAll()
+        return r2dbcInterface.findAll()
                 .map(entity -> new TodoItem(entity.getId(),
                         entity.getName(),
                         State.valueOf(entity.getState())));
@@ -51,11 +51,11 @@ public class TodoItemDaoImpl implements TodoItemDao {
 
     @Override
     public Mono<Void> deleteById(int id) {
-        return h2Interface.deleteById(id);
+        return r2dbcInterface.deleteById(id);
     }
 
     @Override
     public Mono<Void> deleteAll() {
-        return h2Interface.deleteAll();
+        return r2dbcInterface.deleteAll();
     }
 }
