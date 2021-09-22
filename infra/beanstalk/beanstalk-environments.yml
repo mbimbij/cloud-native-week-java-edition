@@ -285,6 +285,22 @@ Resources:
         - Namespace: 'aws:elasticbeanstalk:cloudwatch:logs'
           OptionName: RetentionInDays
           Value: 7
+        - Namespace: 'aws:elasticbeanstalk:healthreporting:system'
+          OptionName: ConfigDocument
+          Value: |
+            {
+              "CloudWatchMetrics": {
+                "Environment":{
+                  "ApplicationRequests2xx": 60
+                  "ApplicationRequests5xx": 60
+                  "ApplicationRequests4xx": 60
+                }
+                "Instance":{
+                  "ApplicationRequestsTotal": 60
+                }
+              },
+              "Version": 1
+            }
 
   SampleEnvironment:
     Type: 'AWS::ElasticBeanstalk::Environment'
