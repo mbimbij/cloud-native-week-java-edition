@@ -5,6 +5,9 @@ metadata:
   name: ${APPLICATION_NAME}
   region: ${AWS_REGION}
 
+iam:
+  withOIDC: true
+
 nodeGroups:
   - name: default-nodegroup
     instanceType: t2.medium
