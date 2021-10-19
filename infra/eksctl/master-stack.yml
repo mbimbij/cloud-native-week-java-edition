@@ -10,6 +10,32 @@ Parameters:
   ApplicationName:
     Type: String
     Description: Application Name
+  DBName:
+    Type: String
+    Description: DB Name
+  DBUser:
+    NoEcho: 'true'
+    Type: String
+    Description: Test database admin account name
+    MinLength: '1'
+    MaxLength: '16'
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: must begin with a letter and contain only alphanumeric characters.
+  OperatorEMail:
+    Description: EMail address to notify if there are any operational issues
+    Type: String
+    AllowedPattern: >-
+      ([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)
+    ConstraintDescription: must be a valid email address.
+  S3Bucket:
+    Type: String
+    Description: S3 Bucket
+  GithubRepo:
+    Type: String
+    Description: Github source code repository
+  GithubRepoBranch:
+    Type: String
+    Description: Github source code branch
   VPCCIDR:
     Type: String
     Description: CIDR block used to create the VPC (e.g. 10.0.0.0/24)
@@ -27,7 +53,7 @@ Parameters:
     ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x. (e.g. 10.0.0.64/26)
   PublicSubnet3CIDR:
     Type: String
-    Description: CIDR block should used to create the public subnet in AZ3 (e.g. 10.0.0.64/26)
+    Description: CIDR block should used to create the public subnet in AZ2 (e.g. 10.0.0.64/26)
     AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{2})"
     ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x. (e.g. 10.0.0.64/26)
   PrivateSubnet1CIDR:
@@ -65,7 +91,7 @@ Resources:
         PrivateSubnet2CIDR: !Ref PrivateSubnet2CIDR
         PrivateSubnet3CIDR: !Ref PrivateSubnet3CIDR
         ApplicationName: !Ref ApplicationName
-        Environment: 'prod'
+        Environment: 'staging'
       Tags:
         - Key: Name
           Value: !Sub '${ApplicationName}::Network'
@@ -76,22 +102,9 @@ Resources:
       Parameters:
         VpcId: !GetAtt Network.Outputs.VPC
         SubnetId: !GetAtt Network.Outputs.PublicSubnet1
-        Environment: 'prod'
+        Environment: 'staging'
         AmiId: !Ref BaseAmiId
         SshKeyName: !Ref SshKeyName
       Tags:
         - Key: Name
           Value: !Sub '${ApplicationName}::BastionHost'
-  EksCluster:
-    Type: "AWS::CloudFormation::Stack"
-    Properties:
-      TemplateURL: 'eks-cluster.yml'
-      Parameters:
-        ApplicationName: !Ref ApplicationName
-        VpcId: !GetAtt Network.Outputs.VPC
-        KubernetesVersion: '1.21'
-        SubnetIds: !GetAtt Network.Outputs.Subnets
-        PublicSubnetIds: !GetAtt Network.Outputs.PublicSubnets
-      Tags:
-        - Key: Name
-          Value: !Sub '${ApplicationName}::EksCluster'

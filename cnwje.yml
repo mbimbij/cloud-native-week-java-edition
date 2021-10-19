@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: cnwje
+  name: cnwje
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: cnwje
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: cnwje
+    spec:
+      containers:
+      - image: cless91/hello-world-springboot:0.0.1-SNAPSHOT
+        name: hello-world-springboot
+        resources: {}
+status: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: cnwje
+  name: cnwje
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: cnwje
+  type: LoadBalancer
+

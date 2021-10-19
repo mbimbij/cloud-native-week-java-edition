@@ -4,7 +4,35 @@
     "ParameterValue": "${APPLICATION_NAME}"
   },
   {
-    "ParameterKey": "VPCCIDR",
+    "ParameterKey": "S3Bucket",
+    "ParameterValue": "${S3_BUCKET_NAME}"
+  },
+  {
+    "ParameterKey": "DBUser",
+    "ParameterValue": "dbuser"
+  },
+  {
+    "ParameterKey": "OperatorEMail",
+    "ParameterValue": "joseph.mbimbi@gmail.com"
+  },
+  {
+    "ParameterKey": "S3Bucket",
+    "ParameterValue": "${S3_BUCKET_NAME}"
+  },
+  {
+    "ParameterKey": "GithubRepo",
+    "ParameterValue": "${GITHUB_REPO}"
+  },
+  {
+    "ParameterKey": "GithubRepoBranch",
+    "ParameterValue": "${GITHUB_REPO_BRANCH}"
+  },
+  {
+    "ParameterKey": "DBName",
+    "ParameterValue": "todolist"
+  },
+  {
+    "ParameterKey": "StagingVPCCIDR",
     "ParameterValue": "10.1.0.0/16"
   },
   {
@@ -28,10 +56,6 @@
     "ParameterValue": "10.1.11.0/24"
   },
   {
-    "ParameterKey": "PrivateSubnet2CIDR",
-    "ParameterValue": "10.1.11.0/24"
-  },
-  {
     "ParameterKey": "PrivateSubnet3CIDR",
     "ParameterValue": "10.1.12.0/24"
   },
@@ -42,6 +66,14 @@
   {
     "ParameterKey": "BaseAmiId",
     "ParameterValue": "${BASE_AMI_ID}"
+  },
+  {
+    "ParameterKey": "StagingMinInstancesNumber",
+    "ParameterValue": "3"
+  },
+  {
+    "ParameterKey": "StagingMaxInstancesNumber",
+    "ParameterValue": "10"
   },
   {
     "ParameterKey": "ApplicationPort",

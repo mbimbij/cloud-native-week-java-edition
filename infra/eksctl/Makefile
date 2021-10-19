@@ -16,8 +16,14 @@ S3_BUCKET_NAME=$(APPLICATION_NAME)-$(AWS_ACCOUNT_ID)-$(AWS_REGION)-bucket
 all: s3-bucket
 	mkdir -p packaged-templates
 	echo "AWS_REGION $(AWS_REGION)"
-	envsubst < cluster-template.yml  > packaged-templates/cluster-template.yml
-	- eksctl create cluster -f  packaged-templates/cluster-template.yml
+	$(eval export BASE_AMI_ID = $(shell aws ssm get-parameters --names /aws/service/canonical/ubuntu/server/20.04/stable/current/amd64/hvm/ebs-gp2/ami-id --query 'Parameters[0].[Value]' --output text))
+	mkdir -p packaged-templates
+	aws cloudformation package --template-file master-stack.yml --output-template packaged-templates/master-stack.yml --s3-bucket $(S3_BUCKET_NAME)
+	echo "AWS_REGION $(AWS_REGION)"
+	envsubst < master-stack-parameters.json  > packaged-templates/master-stack-parameters.json
+	aws cloudformation deploy --stack-name $(MASTER_STACK_NAME) --template-file packaged-templates/master-stack.yml --parameter-overrides file://packaged-templates/master-stack-parameters.json --capabilities CAPABILITY_NAMED_IAM
+#	envsubst < cluster-template.yml  > packaged-templates/cluster-template.yml
+#	- eksctl create cluster -f  packaged-templates/cluster-template.yml
 delete-all:
 	$(MAKE) -j2 delete-s3-bucket
 	eksctl delete cluster --name $(APPLICATION_NAME)

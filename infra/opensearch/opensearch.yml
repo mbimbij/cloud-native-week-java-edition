@@ -1,0 +1,86 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: ElasticsearchDomain resource
+Parameters:
+  DomainName:
+    Description: User-defined Elasticsearch domain name
+    Type: String
+  ElasticsearchVersion:
+    Description: User-defined Elasticsearch version
+    Default: 7.10
+    Type: String
+  InstanceType:
+    Default: 't3.small.elasticsearch'
+    Type: String
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: Vpc Id
+  GroupDescription:
+    Type: String
+  SGName:
+    Type: String
+Resources:
+  ElasticsearchDomain:
+    Type: 'AWS::Elasticsearch::Domain'
+    Properties:
+      DomainName:
+        Ref: DomainName
+      ElasticsearchVersion:
+        Ref: ElasticsearchVersion
+      ElasticsearchClusterConfig:
+        InstanceCount: '1'
+        InstanceType:
+          Ref: InstanceType
+      EBSOptions:
+        EBSEnabled: true
+        Iops: '0'
+        VolumeSize: '10'
+        VolumeType: 'standard'
+      AccessPolicies:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Deny
+            Principal:
+              AWS: '*'
+            Action: 'es:*'
+            Resource: '*'
+      AdvancedOptions:
+        rest.action.multi.allow_explicit_index: true
+      Tags:
+        - Key: foo
+          Value: bar
+      VPCOptions:
+        SubnetIds:
+          - Ref: subnet
+        SecurityGroupIds:
+          - Ref: mySecurityGroup
+  mySecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription:
+        Ref: GroupDescription
+      VpcId:
+        Ref: vpc
+      GroupName:
+        Ref: SGName
+      SecurityGroupIngress:
+        - FromPort: 443
+          IpProtocol: tcp
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+Outputs:
+  DomainArn:
+    Value:
+      'Fn::GetAtt':
+        - ElasticsearchDomain
+        - DomainArn
+  DomainEndpoint:
+    Value:
+      'Fn::GetAtt':
+        - ElasticsearchDomain
+        - DomainEndpoint
+  SecurityGroupId:
+    Value:
+      Ref: mySecurityGroup
+  SubnetId:
+    Value:
+      Ref: subnet
