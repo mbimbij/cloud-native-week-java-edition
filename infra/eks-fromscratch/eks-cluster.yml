@@ -197,3 +197,5 @@ Resources:
       Labels:
         Environment: prod
       Subnets: !Ref PublicSubnetIds
+      InstanceTypes:
+        - t3.small

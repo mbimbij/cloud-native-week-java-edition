@@ -14,10 +14,9 @@ Parameters:
   VpcId:
     Type: AWS::EC2::VPC::Id
     Description: Vpc Id
-  GroupDescription:
-    Type: String
-  SGName:
-    Type: String
+  PublicSubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: Public Subnet Ids
 Resources:
   ElasticsearchDomain:
     Type: 'AWS::Elasticsearch::Domain'
@@ -27,46 +26,46 @@ Resources:
       ElasticsearchVersion:
         Ref: ElasticsearchVersion
       ElasticsearchClusterConfig:
-        InstanceCount: '1'
+        InstanceCount: '3'
         InstanceType:
           Ref: InstanceType
       EBSOptions:
         EBSEnabled: true
-        Iops: '0'
+#        Iops: '0'
         VolumeSize: '10'
-        VolumeType: 'standard'
+        VolumeType: 'gp2'
       AccessPolicies:
         Version: '2012-10-17'
         Statement:
-          - Effect: Deny
+          - Effect: Allow
             Principal:
               AWS: '*'
-            Action: 'es:*'
-            Resource: '*'
+            Action: 'es:ESHttp*'
+            Resource: !Sub 'arn:${AWS::Partition}:es:${AWS::Region}:${AWS::AccountId}:domain/${DomainName}/*'
       AdvancedOptions:
         rest.action.multi.allow_explicit_index: true
-      Tags:
-        - Key: foo
-          Value: bar
       VPCOptions:
         SubnetIds:
-          - Ref: subnet
+          - !Select [0, !Ref PublicSubnetIds]
         SecurityGroupIds:
           - Ref: mySecurityGroup
   mySecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      GroupDescription:
-        Ref: GroupDescription
-      VpcId:
-        Ref: vpc
-      GroupName:
-        Ref: SGName
+      GroupDescription: "Opensearch Security Group"
+      VpcId: !Ref VpcId
+      GroupName: "Opensearch Security Group"
       SecurityGroupIngress:
         - FromPort: 443
           IpProtocol: tcp
           ToPort: 443
           CidrIp: 0.0.0.0/0
+  AWSServiceRoleForAmazonOpenSearchService:
+    Type: 'AWS::IAM::ServiceLinkedRole'
+    Properties:
+      AWSServiceName: es.amazonaws.com
+      Description: 'Role for ES to access resources in my VPC'
+
 Outputs:
   DomainArn:
     Value:
@@ -79,8 +78,4 @@ Outputs:
         - ElasticsearchDomain
         - DomainEndpoint
   SecurityGroupId:
-    Value:
-      Ref: mySecurityGroup
-  SubnetId:
-    Value:
-      Ref: subnet
+    Value: !Ref mySecurityGroup

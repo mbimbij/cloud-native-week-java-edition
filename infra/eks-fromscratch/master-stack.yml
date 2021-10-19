@@ -95,3 +95,14 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub '${ApplicationName}::EksCluster'
+  OpenSearchCluster:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      TemplateURL: '../opensearch/opensearch.yml'
+      Parameters:
+        DomainName: !Ref ApplicationName
+        VpcId: !GetAtt Network.Outputs.VPC
+        PublicSubnetIds: !GetAtt Network.Outputs.PublicSubnets
+      Tags:
+        - Key: Name
+          Value: !Sub '${ApplicationName}::ESCluster'
