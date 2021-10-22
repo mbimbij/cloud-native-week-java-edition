@@ -60,11 +60,11 @@ Resources:
           IpProtocol: tcp
           ToPort: 443
           CidrIp: 0.0.0.0/0
-  AWSServiceRoleForAmazonOpenSearchService:
-    Type: 'AWS::IAM::ServiceLinkedRole'
-    Properties:
-      AWSServiceName: es.amazonaws.com
-      Description: 'Role for ES to access resources in my VPC'
+#  AWSServiceRoleForAmazonOpenSearchService:
+#    Type: 'AWS::IAM::ServiceLinkedRole'
+#    Properties:
+#      AWSServiceName: es.amazonaws.com
+#      Description: 'Role for ES to access resources in my VPC'
 
 Outputs:
   DomainArn:
