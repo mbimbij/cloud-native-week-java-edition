@@ -103,6 +103,7 @@ Resources:
         DomainName: !Ref ApplicationName
         VpcId: !GetAtt Network.Outputs.VPC
         PublicSubnetIds: !GetAtt Network.Outputs.PublicSubnets
+        MasterUserName: cloud-native
       Tags:
         - Key: Name
           Value: !Sub '${ApplicationName}::ESCluster'

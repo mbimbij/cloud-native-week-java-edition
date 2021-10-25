@@ -17,7 +17,23 @@ Parameters:
   PublicSubnetIds:
     Type: List<AWS::EC2::Subnet::Id>
     Description: Public Subnet Ids
+  MasterUserName:
+    Type: String
+    Description: Master User Name
 Resources:
+  MasterUserSecret:
+    Type: 'AWS::SecretsManager::Secret'
+    Properties:
+      Name: !Sub '${DomainName}-MasterUserSecret'
+      Description: "This secret has a dynamically generated secret password."
+      GenerateSecretString:
+        SecretStringTemplate: !Sub '{"username": "${MasterUserName}"}'
+        GenerateStringKey: "password"
+        PasswordLength: 30
+        ExcludeCharacters: '"@/\'
+      Tags:
+        - Key: Name
+          Value: !Ref DomainName
   ElasticsearchDomain:
     Type: 'AWS::Elasticsearch::Domain'
     Properties:
@@ -49,6 +65,20 @@ Resources:
           - !Select [0, !Ref PublicSubnetIds]
         SecurityGroupIds:
           - Ref: mySecurityGroup
+      NodeToNodeEncryptionOptions:
+        Enabled: true
+      EncryptionAtRestOptions:
+        Enabled: true
+      DomainEndpointOptions:
+        EnforceHTTPS: true
+        TLSSecurityPolicy: "Policy-Min-TLS-1-0-2019-07"
+      AdvancedSecurityOptions:
+        Enabled: true
+        InternalUserDatabaseEnabled: true
+        MasterUserOptions:
+          MasterUserName: !Ref MasterUserName
+          MasterUserPassword: iutopomMfKQHZPl9_Ek1
+#          MasterUserPassword: !Sub '{{resolve:secretsmanager:${MasterUserSecret}:SecretString:password}}'
   mySecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
