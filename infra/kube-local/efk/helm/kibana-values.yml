@@ -1,0 +1,4 @@
+elasticsearch:
+  hosts:
+    - elasticsearch-master.logging
+  port: 9200
