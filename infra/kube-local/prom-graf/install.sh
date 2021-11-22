@@ -3,6 +3,7 @@
 ./configure-promgraf-helm-repos.sh
 
 helm upgrade -i prometheus prometheus-community/prometheus \
+    -f prometheus-values.yml \
     --namespace prometheus \
     --set alertmanager.persistentVolume.storageClass="standard" \
     --set server.persistentVolume.storageClass="standard" \
